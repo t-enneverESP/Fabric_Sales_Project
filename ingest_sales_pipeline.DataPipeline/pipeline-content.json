@@ -1,0 +1,204 @@
+{
+  "properties": {
+    "activities": [
+      {
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "DelimitedTextSource",
+            "formatSettings": {
+              "type": "DelimitedTextReadSettings"
+            },
+            "storeSettings": {
+              "type": "AzureBlobStorageReadSettings",
+              "recursive": true,
+              "enablePartitionDiscovery": false
+            },
+            "datasetSettings": {
+              "type": "DelimitedText",
+              "typeProperties": {
+                "location": {
+                  "type": "LakehouseLocation",
+                  "folderPath": "raw/sales",
+                  "fileName": {
+                    "value": "@{pipeline().parameters.file_name}",
+                    "type": "Expression"
+                  }
+                },
+                "columnDelimiter": ",",
+                "quoteChar": "\"",
+                "escapeChar": "\\",
+                "firstRowAsHeader": true
+              },
+              "schema": [],
+              "connectionSettings": {
+                "name": "travs_LH",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "6fb0c8cf-917a-9950-4411-dd7407e26036",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Files"
+                  },
+                  "externalReferences": {
+                    "connection": "6fd710bb-07a3-491e-9d2a-995f6487fdba"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "sink": {
+            "type": "LakehouseTableSink",
+            "tableActionOption": "Append",
+            "applyVOrder": false,
+            "datasetSettings": {
+              "type": "LakehouseTable",
+              "typeProperties": {
+                "schema": "",
+                "table": "BronzeSales"
+              },
+              "schema": [],
+              "connectionSettings": {
+                "name": "travs_LH",
+                "properties": {
+                  "type": "Lakehouse",
+                  "typeProperties": {
+                    "artifactId": "6fb0c8cf-917a-9950-4411-dd7407e26036",
+                    "workspaceId": "00000000-0000-0000-0000-000000000000",
+                    "rootFolder": "Tables"
+                  },
+                  "externalReferences": {
+                    "connection": "6fd710bb-07a3-491e-9d2a-995f6487fdba"
+                  },
+                  "annotations": []
+                }
+              },
+              "annotations": []
+            }
+          },
+          "translator": {
+            "type": "TabularTranslator",
+            "mappings": [
+              {
+                "source": {
+                  "name": "sale_id",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "sale_id",
+                  "physicalType": "string"
+                }
+              },
+              {
+                "source": {
+                  "name": "date",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "date",
+                  "physicalType": "string"
+                }
+              },
+              {
+                "source": {
+                  "name": "customer_name",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "customer_name",
+                  "physicalType": "string"
+                }
+              },
+              {
+                "source": {
+                  "name": "quantity",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "quantity",
+                  "physicalType": "integer"
+                }
+              },
+              {
+                "source": {
+                  "name": "total_value",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "total_value",
+                  "physicalType": "decimal",
+                  "scale": 18,
+                  "precision": 38
+                }
+              },
+              {
+                "source": {
+                  "name": "product_id",
+                  "type": "String",
+                  "physicalType": "String"
+                },
+                "sink": {
+                  "name": "product_id",
+                  "physicalType": "string"
+                }
+              }
+            ],
+            "typeConversion": true,
+            "typeConversionSettings": {
+              "allowDataTruncation": true,
+              "treatBooleanAsNumber": false
+            }
+          },
+          "enableStaging": false
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Copy data1",
+        "dependsOn": []
+      },
+      {
+        "type": "RefreshDataflow",
+        "typeProperties": {
+          "dataflowId": "bd10b3d4-ef4a-a262-41c5-e77152102787",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "notifyOption": "NoNotification",
+          "dataflowType": "DataflowFabric"
+        },
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 0,
+          "retryIntervalInSeconds": 30,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "cleanflow",
+        "dependsOn": [
+          {
+            "activity": "Copy data1",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "file_name": {
+        "type": "string",
+        "defaultValue": "jan_sales.csv"
+      }
+    }
+  }
+}

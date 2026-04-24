@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "trunc"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fed13c2f-38e0-8676-43c4-401bb450119f"
+  }
+}
