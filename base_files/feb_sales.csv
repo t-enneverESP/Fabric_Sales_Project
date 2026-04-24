@@ -1,0 +1,3 @@
+﻿sale_id,date,customer_name,quantity,total_value,product_id
+S1003,01/02/2026,Mary Smith,13,876,p03
+S1004,02/02/2026,Jack Mills,2,200,p04
